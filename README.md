@@ -71,7 +71,7 @@ GIT_SCM_URL:
 GIT_SCM_BRANCH:
 ```
 
-You will also need to install pip modules required by rrules for scheduling workflow templates.
+You will also need to install pip modules required by `rrules` for scheduling workflow templates.
 * pytz
 * python-dateutil
 
