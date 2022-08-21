@@ -1,0 +1,79 @@
+- name: Create Get Transaction History from {{ BANK }} job template
+  awx.awx.job_template:
+    name: "Get Transaction History from {{ BANK }}"
+    job_type: "run"
+    organization: "Default"
+    inventory: "Demo Inventory"
+    project: "Home Automation"
+    playbook: "{{ GET_TRANSACTIONS_PLAYBOOK }}"
+    credentials:
+      - "{{ CREDENTIAL_GET_TRANSACTIONS_01 }}"
+    state: "present"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
+
+- name: Create Process Transaction History Data job template
+  awx.awx.job_template:
+    name: "Process Transaction History Data"
+    job_type: "run"
+    organization: "Default"
+    inventory: "Demo Inventory"
+    project: "Home Automation"
+    playbook: "process-transactions.yml"
+    credentials:
+      - "Postgres"
+    state: "present"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
+
+- name: Create Send New Transactions to Splunk job template
+  awx.awx.job_template:
+    name: "Send New Transactions to Splunk"
+    job_type: "run"
+    organization: "Default"
+    inventory: "Demo Inventory"
+    project: "Home Automation"
+    playbook: "splunk-hec.yml"
+    credentials:
+      - "{{ CREDENTIAL_SPLUNK_HEC_01 }}"
+    state: "present"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
+
+- name: Create {{ USER_02 }} - Get Transaction History from {{ BANK }} job template
+  awx.awx.job_template:
+    name: "{{ USER_02 }} - Get Transaction History from {{ BANK }}"
+    job_type: "run"
+    organization: "Default"
+    inventory: "Demo Inventory"
+    project: "Home Automation"
+    playbook: "{{ GET_TRANSACTIONS_PLAYBOOK }}"
+    credentials:
+      - "{{ CREDENTIAL_GET_TRANSACTIONS_02 }}"
+    state: "present"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
+
+- name: Create {{ USER_02 }} - Send New Transactions to Splunk job template
+  awx.awx.job_template:
+    name: "{{ USER_02 }} - Send New Transactions to Splunk"
+    job_type: "run"
+    organization: "Default"
+    inventory: "Demo Inventory"
+    project: "Home Automation"
+    playbook: "splunk-hec.yml"
+    credentials:
+      - "{{ CREDENTIAL_SPLUNK_HEC_02 }}"
+    state: "present"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"

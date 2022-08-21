@@ -1,0 +1,53 @@
+- name: Create workflow {{ item.WORKFLOW_NAME }} with workflow nodes in template
+  awx.awx.workflow_job_template:
+    name: "{{ item.WORKFLOW_NAME }}"
+    inventory: Demo Inventory
+    extra_vars:
+      bank: "{{ BANK }}"
+      transaction_type: "{{ item.TRANSACTION_TYPE }}"
+      account_name: "{{ item.ACCOUNT_NAME }}"
+      table_name: "{{ item.TABLE_NAME }}"
+      days_ago: "{{ DAYS_AGO }}"
+    workflow_nodes:
+      - identifier: "{{ item.GET_IB_DATA_TEMPLATE_NAME }}"
+        unified_job_template:
+          organization:
+            name: Default
+          name: "{{ item.GET_IB_DATA_TEMPLATE_NAME }}"
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: Process Transaction History Data
+          failure_nodes: []
+          always_nodes: []
+          credentials: []
+      - identifier: Process Transaction History Data
+        unified_job_template:
+          organization:
+            name: Default
+          name: Process Transaction History Data
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: "{{ item.SEND_TO_SPUNK_TEMPLATE_NAME }}"
+          failure_nodes: []
+          always_nodes: []
+          credentials: []
+      - identifier: "{{ item.SEND_TO_SPUNK_TEMPLATE_NAME }}"
+        unified_job_template:
+          organization:
+            name: Default
+          name: "{{ item.SEND_TO_SPUNK_TEMPLATE_NAME }}"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes: []
+          credentials: []
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
+
+- name: Create schedule for workflow
+  include_tasks: schedule.yml

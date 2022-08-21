@@ -1,0 +1,34 @@
+- name: Define time string for scheduling
+  block:
+    - name: Build time string
+      set_fact:
+        time_string: "{{ '%Y-%m-%d %H:' | strftime( ( ansible_date_time.epoch | int ) + ( 3600 * 2 )  ) }}"
+
+    - name: Build rrule time string
+      set_fact:
+        start_time: "{{ time_string + item.START_MINUTE + ':00' }}"
+  when: item.START_HOUR is not defined
+
+- name: Define time string for scheduling
+  block:
+    - name: Build time string
+      set_fact:
+        time_string: "{{ '%Y-%m-%d ' | strftime( ( ansible_date_time.epoch | int ) + ( 3600 * 2 )  ) }}"
+
+    - name: Build rrule time string
+      set_fact:
+        start_time: "{{ time_string + item.START_HOUR+ ':' + item.START_MINUTE + ':00' }}"
+  when: item.START_HOUR is defined
+
+- name: Create schedule for "{{ item.WORKFLOW_NAME }}"
+  awx.awx.schedule:
+    name: "{{ item.WORKFLOW_NAME }}"
+    state: present
+    unified_job_template: "{{ item.WORKFLOW_NAME }}"
+    rrule: "{{ query('awx.awx.schedule_rruleset', start_time, rules=rrules, timezone='Pacific/Auckland') }}"
+  vars:
+    rrules: "{{ item.RRULES }}"
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"

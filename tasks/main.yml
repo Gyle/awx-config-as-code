@@ -1,0 +1,22 @@
+- name: AWX Automated Configuration as Code Playbook
+  hosts: localhost
+  gather_facts: True
+  tasks:
+  - name: Include vars
+    include_vars: ../vars/vars.yml
+
+  - name: Include create crendential types task
+    include_tasks: credential_type.yml
+
+  - name: Include create crendentials task
+    include_tasks: credentials.yml
+
+  - name: Include create project task
+    include_tasks: project.yml
+
+  - name: Include create job templates task
+    include_tasks: job.yml
+
+  - name: Include create workflow templates task
+    include_tasks: workflow.yml
+    loop: "{{ WORKFLOW_VARS }}"

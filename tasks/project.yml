@@ -1,0 +1,16 @@
+- name: Create Project
+  awx.awx.project:
+    name: "Home Automation"
+    organization: "Default"
+    description: "Personal collection of automation playbooks"
+    default_environment: "Control Plane Execution Environment"
+    credential: "GitHub SSH Key"
+    scm_type: git
+    scm_url: "{{ GIT_SCM_URL }}"
+    scm_branch: "{{ GIT_SCM_BRANCH }}"
+    state: present
+    validate_certs: false
+  environment:
+    TOWER_HOST: "{{ TOWER_HOST }}"
+    TOWER_USERNAME: "{{ TOWER_USERNAME }}"
+    TOWER_PASSWORD: "{{ TOWER_PASSWORD }}"
